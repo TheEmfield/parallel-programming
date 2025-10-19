@@ -10,11 +10,28 @@ void partialGoodCounter(int partSize, int r, int seed, size_t &res);
 
 int main(int argc, char *argv[])
 {
+  if (argc < 2 || argc > 3)\
+  {
+    std::cout << "Wrong number of command line arguments\n";
+    return -1;
+  }
+
   int tries = std::stoi(argv[1]);
+  if (tries <= 0)
+  {
+    std::cout << "Wrong number of tries\n";
+    return -1;
+  }
+
   int seed = 0;
   if (argc == 3)
   {
     seed = std::stoi(argv[2]);
+    if (seed < 0)
+    {
+      std::cout << "Wrong init value for seed\n";
+      return -1;
+    }
   }
 
   int radius = 0, threadsCnt = 0;
@@ -22,11 +39,19 @@ int main(int argc, char *argv[])
   while (!std::cin.eof())
   {
     std::cin >> radius >> threadsCnt;
+    if (radius * threadsCnt <= 0)
+    {
+      std::cout << "Wrong radius or threads number\n";
+      return -1;
+    }
+    
     auto start = timer.now();
     double area = areaMonteCarlo(radius, tries, threadsCnt, seed);
     auto end = timer.now();
     std::cout << std::chrono::duration_cast< std::chrono::milliseconds >(end - start).count() << " " << area << "\n";
   }
+
+  return 0;
 }
 
 double areaMonteCarlo(int r, int tries, int threadsCnt, int seed)
