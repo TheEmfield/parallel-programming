@@ -15,30 +15,31 @@ int main(int argc, char *argv[])
   if (argc == 3)
   {
     seed = std::stoi(argv[2]);
-  } 
+  }
+
   int radius = 0, threadsCnt = 0;
   std::chrono::steady_clock timer;
   while (!std::cin.eof())
   {
     std::cin >> radius >> threadsCnt;
     auto start = timer.now();
-    double area = areaMonteCarlo(radius, tries, threadsCnt, 0);
+    double area = areaMonteCarlo(radius, tries, threadsCnt, seed);
     auto end = timer.now();
     std::cout << std::chrono::duration_cast< std::chrono::milliseconds >(end - start).count() << " " << area << "\n";
   }
 }
 
-double areaMonteCarlo(int r, int tries, int threadsCnt, int seed = 0)
+double areaMonteCarlo(int r, int tries, int threadsCnt, int seed)
 {
   size_t partSize = tries / threadsCnt;
   std::vector< std::thread > ths;
   ths.reserve(threadsCnt);
   std::vector< size_t > countGood(threadsCnt, 0);
+
   for (size_t i = 0; i < threadsCnt; i++)
   {
     ths.emplace_back(partialGoodCounter, partSize, r, seed, std::ref(countGood[i]));
   }
-
   for (auto &t: ths)
   {
     t.join();
@@ -51,7 +52,7 @@ double areaMonteCarlo(int r, int tries, int threadsCnt, int seed = 0)
 void partialGoodCounter(int partSize, int r, int seed, size_t &res)
 {
   std::mt19937 coordGenerator(seed);
-  std::uniform_real_distribution<double> dist(0, r);
+  std::uniform_real_distribution< double > dist(0, r);
   size_t cntGood = 0;
   for (size_t i = 0; i < partSize; i++)
   {
