@@ -10,7 +10,7 @@ void partialGoodCounter(int partSize, int r, int seed, size_t &res);
 
 int main(int argc, char *argv[])
 {
-  if (argc < 2 || argc > 3)\
+  if (argc < 2 || argc > 3)
   {
     std::cout << "Wrong number of command line arguments\n";
     return -1;
