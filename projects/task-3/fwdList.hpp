@@ -138,7 +138,7 @@ namespace shapkov
 		}
 		friend std::ostream& operator<<(std::ostream& out, const ForwardList& list)
 		{
-			Node* node = list.head_;
+			Node< Key, Value >* node = list.head_;
 			while (node)
 			{
 				out << node->data_ << " ";

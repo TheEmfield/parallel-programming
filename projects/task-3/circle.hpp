@@ -1,7 +1,7 @@
 #ifndef CIRCLE_HPP
 #define CIRCLE_HPP
 
-#include <random>
+#include <iostream>
 #include "base-types.hpp"
 #include "shape.hpp"
 
@@ -15,11 +15,14 @@ namespace shapkov
         Shape* clone() const;
         double getAreaMonteCarlo() const;
         rectangle_t getFrameRect() const;
+        friend std::ostream& operator<<(std::ostream& out, const Circle& circle);
 
     private:
         point_t center_;
         int radius_;
     };
+
+    std::ostream& operator<<(std::ostream& out, const Circle& circle);
 }
 
 #endif

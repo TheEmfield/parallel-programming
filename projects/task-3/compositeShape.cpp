@@ -1,8 +1,7 @@
 #include "compositeShape.hpp"
-#include <algorithm>
+#include <cmath>
 
-shapkov::CompositeShape::CompositeShape(int numberShapes):
-    numberShapes_(numberShapes)
+shapkov::CompositeShape::CompositeShape(int numberShapes) : numberShapes_(numberShapes)
 {
     shapes_ = new Shape *[numberShapes_]{nullptr};
 }
@@ -13,7 +12,7 @@ shapkov::CompositeShape::CompositeShape(const CompositeShape &obj):
     shapes_ = new Shape *[obj.numberShapes_]{nullptr};
     try
     {
-        for (int i = 0; i < numberShapes_; i++)
+        for (size_t i = 0; i < numberShapes_; i++)
         {
             if (obj.shapes_[i])
             {
@@ -23,7 +22,7 @@ shapkov::CompositeShape::CompositeShape(const CompositeShape &obj):
     }
     catch (const std::bad_alloc &)
     {
-        for (int i = 0; i < numberShapes_; i++)
+        for (size_t i = 0; i < numberShapes_; i++)
         {
             delete shapes_[i];
         }
@@ -46,7 +45,7 @@ shapkov::CompositeShape::~CompositeShape()
 {
     if (shapes_)
     {
-        for (int i = 0; i < numberShapes_; i++)
+        for (size_t i = 0; i < numberShapes_; i++)
         {
             delete shapes_[i];
         }
@@ -56,7 +55,8 @@ shapkov::CompositeShape::~CompositeShape()
 
 shapkov::CompositeShape &shapkov::CompositeShape::operator+=(Shape &shape)
 {
-    if (realNumberShapes_ >= numberShapes_) {
+    if (realNumberShapes_ >= numberShapes_)
+    {
         expanse(numberShapes_ * 2 + 1);
     }
     shapes_[realNumberShapes_] = shape.clone();
@@ -66,32 +66,23 @@ shapkov::CompositeShape &shapkov::CompositeShape::operator+=(Shape &shape)
 
 rectangle_t shapkov::CompositeShape::getFrameRectangle() const
 {
-    // double minX = 0,
-    // 	minY = 0,
-    // 	maxX = 0,
-    // 	maxY = 0;
-    // point_t leftCoord,
-    // 	rightCoord;
-    // for (int i = 0; i < numberShapes_; i++) {
-    // 	if (shapes_[i]) {
-    // 		rectangle_t obj = shapes_[i]->getFrameRectangle();
-    // 		leftCoord = point_t(obj.getPos().getX() - (obj.getWidth() / 2), obj.getPos().getY() - (obj.getHeight() / 2));
-    // 		rightCoord = point_t(obj.getPos().getX() + (obj.getWidth() / 2), obj.getPos().getY() + (obj.getHeight() / 2));
-    // 		if (i == 0) {
-    // 			minX = leftCoord.getX();
-    // 			minY = leftCoord.getY();
-    // 			maxX = rightCoord.getX();
-    // 			maxY = rightCoord.getY();
-    // 		}
-    // 		else {
-    // 			minX = std::min(minX, leftCoord.getX());
-    // 			minY = std::min(minY, leftCoord.getY());
-    // 			maxX = std::max(maxX, rightCoord.getX());
-    // 			maxY = std::max(maxY, rightCoord.getY());
-    // 		}
-    // 	}
-    // }
-    // return rectangle_t(maxX - minX, maxY - minY, point_t((maxX + minX) / 2, (maxY + minY) / 2));
+    double min_x = shapes_[0]->getFrameRect().pos.x - shapes_[0]->getFrameRect().width / 2;
+    double max_x = shapes_[0]->getFrameRect().pos.x + shapes_[0]->getFrameRect().width / 2;
+    double min_y = shapes_[0]->getFrameRect().pos.y - shapes_[0]->getFrameRect().height / 2;
+    double max_y = shapes_[0]->getFrameRect().pos.y + shapes_[0]->getFrameRect().height / 2;
+    for (size_t i = 1; i < realNumberShapes_; i++)
+    {
+        rectangle_t rectangl = shapes_[i]->getFrameRect();
+        min_x = std::fmin(min_x, rectangl.pos.x - (rectangl.width / 2));
+        min_y = std::fmin(min_y, rectangl.pos.y - (rectangl.height / 2));
+        max_x = std::fmax(max_x, rectangl.pos.x + (rectangl.width / 2));
+        max_y = std::fmax(max_y, rectangl.pos.y + (rectangl.height / 2));
+    }
+    double width = max_x - min_x;
+    double height = max_y - min_y;
+    point_t pos{min_x + (width / 2), min_y + (height / 2)};
+    rectangle_t rect{width, height, pos};
+    return rect;
 }
 
 void shapkov::CompositeShape::swap(CompositeShape &rhs) noexcept
@@ -124,7 +115,8 @@ shapkov::CompositeShape &shapkov::CompositeShape::operator=(CompositeShape &&obj
 
 double shapkov::CompositeShape::getArea() const
 {
-    
+    //TODO, BUT I HAVE ALREADY UNDERSTOOD THAT I NEEDNT THIS
+    return 1.2;
 }
 
 shapkov::CompositeShape *shapkov::CompositeShape::clone() const
@@ -135,12 +127,12 @@ shapkov::CompositeShape *shapkov::CompositeShape::clone() const
 
 void shapkov::CompositeShape::expanse(size_t new_size)
 {
-  Shape** new_shapes = new Shape*[new_size];
-  for (size_t i = 0; i < numberShapes_; i++)
-  {
-    new_shapes[i] = shapes_[i];
-  }
-  delete[] shapes_;
-  shapes_ = new_shapes;
-  numberShapes_ = new_size;
+    Shape **new_shapes = new Shape *[new_size];
+    for (size_t i = 0; i < numberShapes_; i++)
+    {
+        new_shapes[i] = shapes_[i];
+    }
+    delete[] shapes_;
+    shapes_ = new_shapes;
+    numberShapes_ = new_size;
 }

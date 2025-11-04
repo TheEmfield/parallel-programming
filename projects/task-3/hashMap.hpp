@@ -56,20 +56,20 @@ namespace shapkov
 
 	template < class Key, class T, class Hash, class KeyEqual >
 	HashMap< Key, T, Hash, KeyEqual >::HashMap(size_t size) :
-		size_(size),
 		buckets_(new ForwardList< Key, T >[size]),
 		number_(0),
+		size_(size),
 		hash(Hash{}),
 		key_equal(KeyEqual{})
 	{}
 
 	template < class Key, class T, class Hash, class KeyEqual >
 	HashMap< Key, T, Hash, KeyEqual >::HashMap(const HashMap& src) :
-		size_(src.size_),
 		buckets_(new ForwardList< Key, T >[src.size_]),
-		number_(src.number_),
-		hash(src.hash),
-		key_equal(src.key_equal)
+    	number_(src.number_),
+    	size_(src.size_),
+    	hash(src.hash),
+    	key_equal(src.key_equal)
 	{
 		try
 		{
@@ -87,15 +87,15 @@ namespace shapkov
 
 	template < class Key, class T, class Hash, class KeyEqual >
 	HashMap< Key, T, Hash, KeyEqual >::HashMap(HashMap&& src) noexcept:
-		size_(src.size_),
 		buckets_(src.buckets_),
-		number_(src.number_),
-		hash(src.hash),
-		key_equal(src.key_equal)
+    	number_(src.number_),
+    	size_(src.size_),
+    	hash(src.hash),
+    	key_equal(src.key_equal)
 	{
-		src.size_ = 0;
-		src.number_ = 0;
 		src.buckets_ = nullptr;
+    	src.number_ = 0;
+    	src.size_ = 0;
 	}
 
 	template < class Key, class T, class Hash, class KeyEqual >

@@ -21,8 +21,8 @@ namespace shapkov
         void expanse(size_t new_size);
 
     private:
-        int numberShapes_;
-        int realNumberShapes_ = 0;
+        size_t numberShapes_;
+        size_t realNumberShapes_ = 0;
         Shape **shapes_{nullptr};
     };
 }
