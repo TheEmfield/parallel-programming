@@ -8,8 +8,12 @@ int main()
 {
     shapkov::App app;
     shapkov::HashMap< std::string, std::function < void() > > cmds;
-    cmds["circle"] = std::bind(shapkov::newCircle, std::ref(std::cin), std::ref(std::cout), std::ref(app.shapes));
+    cmds["circle"] = std::bind(shapkov::new_circle, std::ref(std::cin), std::ref(app.shapes));
     cmds["show"] = std::bind(shapkov::show, std::ref(std::cin), std::ref(std::cout), std::cref(app.shapes));
+    cmds["set"] = std::bind(shapkov::new_set, std::ref(std::cin), std::ref(app));
+    cmds["showset"] = std::bind(shapkov::show_set, std::ref(std::cin), std::ref(std::cout), std::cref(app));
+    cmds["frame"] = std::bind(shapkov::frame_rect, std::ref(std::cin), std::ref(std::cout), std::cref(app.shapes));
+    cmds["frameset"] = std::bind(shapkov::frame_set, std::ref(std::cin), std::ref(std::cout), std::cref(app));
 
     std::string command;
     while (!(std::cin >> command).eof())
